@@ -5,11 +5,23 @@ _mixed_ordinal_pat = _whole_word(r'-?\d+(st|th|nd|rd)')
 _integer_pat = _whole_word(r'\d+')
 _floating_point_after_pat = re.compile(r'\.\d+[^a-zA-Z.]')
 _floating_point_before_pat = re.compile(r'(?<=\d\.)')
+_date_iso8601_pat = _whole_word(r'\d{4}-(0\d|1[0-2])-(0[1-9]|[12][0-9]|3[01])')
+_date_non_iso8601_pat = _whole_word(r'\d{2} (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4}')
 
 def mixed_ordinals(text):
     '''Find tokens that begin with a number, and then have an ending like 1st or 2nd.'''
     for match in _mixed_ordinal_pat.finditer(text):
         yield('ordinal', match)
+
+def dates_iso8601(text):
+    '''Find tokens that begin that contain an iso8601 date.'''
+    for match in _date_iso8601_pat.finditer(text):
+        yield('date', match)
+
+def dates_non_iso8601(text):
+    '''Find tokens that begin that contain a non-iso8601 date.'''
+    for match in _date_non_iso8601_pat.finditer(text):
+        yield ('date', match)
 
 def integers(text):
     '''Find integers in text. Don't count floating point numbers.'''
